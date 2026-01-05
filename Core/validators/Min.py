@@ -1,0 +1,14 @@
+from Core.errors import ValidationError
+
+class Min:
+    def __init__(self, minimum):
+        self.minimum = minimum
+
+    def __call__(self, value):
+        if value < self.minimum:
+            return ValidationError(
+                code="Min",
+                message="Too small",
+                meta={"Min": self.minimum}
+            )
+        return None
