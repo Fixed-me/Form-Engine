@@ -3,6 +3,7 @@
 .testfile.py
 
 # Byte-compiled / optimized / DLL files
+Core/__pycache__/
 __pycache__/
 *.py[codz]
 *$py.class
