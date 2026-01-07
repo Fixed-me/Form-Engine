@@ -8,7 +8,7 @@ class RegisterForm(Form):
 
 good_data = {
     "email": "https://stackoverflow.com/",
-    "password": "True"
+    "password": True
 }
 
 form = RegisterForm(good_data)

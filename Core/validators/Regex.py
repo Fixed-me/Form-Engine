@@ -12,3 +12,4 @@ class Regex:
                 message="Invalide Format",
                 meta=self.pattern
             )
+        return None

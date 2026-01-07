@@ -64,9 +64,9 @@ class Field:
 class String(Field):
     def __init__(self, *, required=False, min_length=None, max_length=None, regex=None):
         validators = []
-        from Core.validators.MaxLength import MaxLength
-        from Core.validators.MinLength import MinLength
-        from Core.validators.Regex import Regex
+        from Core.validators.maxLength import MaxLength
+        from Core.validators.minLength import MinLength
+        from Core.validators.regex import Regex
         
         if regex is not None:
             validators.append(Regex(regex))
@@ -81,15 +81,15 @@ class String(Field):
         if value is None:
             return None
         if not isinstance(value, str):
-            return ValidationError("type", "Expected string")
+            return ValidationError("type", "Expected string", value)
         return value
 
 class Int(Field):
     def __init__(self, *, required=False, min=None, max=None, nullable=True):
+        from Core.validators.min import Min
+        from Core.validators.max import Max
+        from Core.validators.nullable import Nullable
         validators = []
-        from Core.validators.Min import Min
-        from Core.validators.Max import Max
-        from Core.validators.Nullable import Nullable
 
         if nullable is not True:
             validators.append(Nullable(nullable))
@@ -106,15 +106,15 @@ class Int(Field):
         try:
             return int(value)
         except (ValueError, TypeError):
-            raise ValidationError("type", "invalid_int")
+            raise ValidationError("type", "invalid_int", value)
 
 class Float(Field):
 
     def __init__(self, *, required=False, min=None, max=None, nullable=True):
+        from Core.validators.min import Min
+        from Core.validators.max import Max
+        from Core.validators.nullable import Nullable
         validators = []
-        from Core.validators.Min import Min
-        from Core.validators.Max import Max
-        from Core.validators.Nullable import Nullable
 
         if nullable is not True:
             validators.append(Nullable(nullable))
@@ -135,27 +135,26 @@ class Float(Field):
 
 class Bool(Field):
 
-    def __init__(self, *, required=False, bool=None):
-        from Core.validators import Bool
+    def __init__(self, *, required=False, bool=True):
+        from Core.validators.bool import Bool
         validators = []
 
         if bool is not None and bool in (True, False):
             validators.append(Bool(bool))
 
-        super().__init__(required=required, bool=bool)
+        super().__init__(required=required, validators=validators)
 
     def to_python(self, value):
         if value is None or value == "":
             return None
-        try:
-            return Bool(value)
-        except (ValueError, TypeError):
+        if not isinstance(value, bool):
             raise ValidationError("type", "invalid_bool")
-
+        return value
+    
 class Email(String):
     def __init__(self, *, required=False, regex=None):
-        from Core.validators.Email import Email
-        from Core.validators.Regex import Regex
+        from Core.validators.email import Email
+        from Core.validators.regex import Regex
         validators = []
         
         if regex is not None:
@@ -167,15 +166,15 @@ class Email(String):
 class List(Field):
 
     def __init__(self, *, required=False, list=None, inList=True):
+        from Core.validators.inList import InList
+        from Core.validators.notInList import NotInList
         validators = []
-        from Core.validators.InList import InList
-        from Core.validators.NotInList import NotInList
-        
+
         if list is not None and inList is True:
             validators.append(InList(list, inList))
         elif list is not None and inList is False:
             validators.append(NotInList(list, inList))
-        super().__init__(required=required)
+        super().__init__(required=required, validators=validators)
     
     def to_python(self, value):
         if value is None or value == "":
@@ -183,12 +182,12 @@ class List(Field):
         try:
             return List(value)
         except (ValueError, TypeError):
-            raise ValidationError("type", "invalid_List")
+            raise ValidationError("type", "invalid_List", value)
 
 class Url(String):
 
     def __init__(self, *, required=False):
-        from Core.validators import URL
+        from Core.validators.url import URL
         validators = []
 
         validators.append(URL())
