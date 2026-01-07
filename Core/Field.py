@@ -3,20 +3,29 @@
 from Core.errors import ValidationError
 
 class Field:
-    def __init__(self, *, required=False, default=None, validators=None):
+    def __init__(self, *, required=False, default=None, blank=False, validators=None):
         self.required = required
         self.default = default
         self.validators = validators or []
         self.name = None
+        self.blank = blank
 
     def to_python(self, value):
         return value
 
     def _validate_required(self, value):
-        if self.required and (value is None or value == ""):
+        if self.required and (value is None):
             return ValidationError(
-                code="required",
-                message="This field is required"
+                "required",
+                "This field is required"
+            )
+        return None
+    
+    def _validate_required(self, value):
+        if self.blank and (value == ""):
+            return ValidationError(
+                "blank",
+                "This Field may not be blank"
             )
         return None
 
@@ -96,10 +105,11 @@ class Int(Field):
             return None
         try:
             return int(value)
-        except:
+        except (ValueError, TypeError):
             raise ValidationError("type", "invalid_int")
 
 class Float(Field):
+
     def __init__(self, *, required=False, min=None, max=None, nullable=True):
         validators = []
         from Core.validators.Min import Min
@@ -120,8 +130,27 @@ class Float(Field):
             return None
         try:
             return float(value)
-        except ValidationError:
+        except (ValueError, TypeError):
             raise ValidationError("type", "invalid_float")
+
+class Bool(Field):
+
+    def __init__(self, *, required=False, bool=None):
+        from Core.validators import Bool
+        validators = []
+
+        if bool is not None and bool in (True, False):
+            validators.append(Bool(bool))
+
+        super().__init__(required=required, bool=bool)
+
+    def to_python(self, value):
+        if value is None or value == "":
+            return None
+        try:
+            return Bool(value)
+        except (ValueError, TypeError):
+            raise ValidationError("type", "invalid_bool")
 
 class Email(String):
     def __init__(self, *, required=False, regex=None):
@@ -135,7 +164,7 @@ class Email(String):
         
         super().__init__(required=required)
 
-class list(Field):
+class List(Field):
 
     def __init__(self, *, required=False, list=None, inList=True):
         validators = []
@@ -146,4 +175,22 @@ class list(Field):
             validators.append(InList(list, inList))
         elif list is not None and inList is False:
             validators.append(NotInList(list, inList))
+        super().__init__(required=required)
+    
+    def to_python(self, value):
+        if value is None or value == "":
+            return None
+        try:
+            return List(value)
+        except (ValueError, TypeError):
+            raise ValidationError("type", "invalid_List")
+
+class Url(String):
+
+    def __init__(self, *, required=False):
+        from Core.validators import URL
+        validators = []
+
+        validators.append(URL())
+
         super().__init__(required=required)

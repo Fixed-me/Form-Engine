@@ -1,6 +1,6 @@
 #Tests
 /Tests
-.testfile.py
+testfile.py
 
 # Byte-compiled / optimized / DLL files
 Core/__pycache__/

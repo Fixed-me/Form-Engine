@@ -1,16 +1,14 @@
 # user_code.py
 from Core.Form import Form
-from Core.Field import String, Int, Email
+from Core.Field import Url, Bool
 
 class RegisterForm(Form):
-    email = Email()
-    password = String(min_length=8, max_length=11)
-    age = Int(min=18, max=20)
+    email = Url()
+    password = Bool(bool=True)
 
 good_data = {
-    "email": "1123",
-    "password": "supersecret",
-    "age": "1"
+    "email": "https://stackoverflow.com/",
+    "password": "True"
 }
 
 form = RegisterForm(good_data)
