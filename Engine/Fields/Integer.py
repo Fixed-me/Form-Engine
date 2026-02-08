@@ -2,7 +2,7 @@ from Engine.Core.Field import Field
 from Engine.Core.errors import ValidationError
 
 class Integer(Field):
-    def __init__(self, *, required: bool =True, requiredif= None, blank: bool=False, minvalue: int=None, maxvalue: int=None, nullable: bool=True, validators=None):
+    def __init__(self, *, required: bool =True, requiredif= None, blank: bool=False, default=None, minvalue: int=None, maxvalue: int=None, nullable: bool=True, validators=None):
         from Engine.validators.Min import Min
         from Engine.validators.Max import Max
 
@@ -16,7 +16,7 @@ class Integer(Field):
         for v in validators:
             validator.append(v)
 
-        super().__init__(required=required, nullable=nullable, blank=blank , requiredif=requiredif, validators=validator)
+        super().__init__(required=required, nullable=nullable, blank=blank , requiredif=requiredif, default=default, validators=validator)
 
     # Validators would return an "actual" Error if it isn't the Correct Type
     def to_python(self, value):

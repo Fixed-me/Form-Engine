@@ -2,7 +2,7 @@ from Engine.Core.Field import Field
 from Engine.Core.errors import ValidationError
 
 class String(Field):
-    def __init__(self, *, required: bool = True, requiredif = None, nullable: bool=True, blank: bool =False, minlength: int = None, maxlength: int =None, validator=None):
+    def __init__(self, *, required: bool = True, requiredif = None, nullable: bool=True, blank: bool =False, default=None, minlength: int = None, maxlength: int =None, validator=None):
         from Engine.validators.MaxLength import MaxLength
         from Engine.validators.MinLength import MinLength
         validators = []
@@ -16,7 +16,7 @@ class String(Field):
             for v in validator:
                 validators.append(v)
 
-        super().__init__(required=required, nullable=nullable, blank=blank, requiredif=requiredif, validators=validators)
+        super().__init__(required=required, nullable=nullable, blank=blank, requiredif=requiredif, default=default, validators=validators)
 
     # Validators would return an "actual" Error if it isn't the Correct Type
     def to_python(self, value):

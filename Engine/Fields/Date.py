@@ -1,9 +1,11 @@
+from email.policy import default
+
 from Engine.Core.Field import Field
 from Engine.Core.errors import ValidationError
 
 class Date(Field):
 
-    def __init__(self, *, required: bool=True, requiredif=None, blank: bool=False, nullable: bool=None, dateformat=None, before=None, after=None, validators=None):
+    def __init__(self, *, required: bool=True, requiredif=None, blank: bool=False, nullable: bool=None, default=None, dateformat=None, before=None, after=None, validators=None):
         from Engine.validators import Dateformat
         from Engine.validators.BeforeDate import Before
         from Engine.validators.AfterDate import After
@@ -21,7 +23,7 @@ class Date(Field):
             validator.append(v)
 
         # for the Field class to handel the Field Validators
-        super().__init__(required=required, requiredif=requiredif, nullable=nullable, blank=blank , validators=validator)
+        super().__init__(required=required, requiredif=requiredif, nullable=nullable, blank=blank, default=default , validators=validator)
 
     # Validators would return an "actual" Error if it isn't the Correct Type
     from datetime import datetime

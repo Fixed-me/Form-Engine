@@ -3,7 +3,7 @@ from Engine.Core.errors import ValidationError
 
 class Bool(Field):
 
-    def __init__(self, *, required: bool=True, requiredif=None, blank: bool=False, nullable: bool=True, value: bool=True, validators=None):
+    def __init__(self, *, required: bool=True, requiredif=None, blank: bool=False, nullable: bool=True, default=None, value: bool=True, validators=None):
         from Engine.validators.Bool import Bool
         validator = []
 
@@ -14,7 +14,7 @@ class Bool(Field):
             validator.append(v)
 
         # for the Field class to handel the Field Validators
-        super().__init__(required=required, requiredif=requiredif, nullable=nullable, blank=blank ,validators=validator)
+        super().__init__(required=required, requiredif=requiredif, nullable=nullable, blank=blank, default=default,validators=validator)
 
     # Validators would return an "actual" Error if it isn't the Correct Type
     def to_python(self, value):

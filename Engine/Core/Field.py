@@ -11,16 +11,60 @@ class Field:
         self.name = None
         self.blank = blank
 
-    def to_python(self, value):
+    def _apply_default(self, value):
+
+        # Inputs missing oder None
+        if value is None:
+            # Test if field is required
+            required_now = self.required or (self.requiredif is not None and self._requiredif_applies())
+            if required_now:
+                if self.default is None:
+                    return ValidationError(
+                        "required",
+                        "This Field is required",
+                        meta={"Required": self.required}
+                    )
+            # Fallback default
+            value = self.default
+
         return value
+
+    def _requiredif_applies(self):
+        if self.requiredif is None:
+            return False
+
+        other, expected = self.requiredif
+        is_filled = other not in (None, "")
+        return (is_filled and expected) or (not is_filled and not expected)
+
+    def _validate_required(self, value):
+        if self.required and (value is None):
+            return ValidationError(
+                "required",
+                "This field is required",
+                meta={"Required": self.required}
+
+            )
+
+        return False
 
     def _validate_nullable(self, value):
 
-        if not self.nullable and (value == 0 or value == ""):
+        if not self.nullable and (value is None):
             return ValidationError(
                 code="nullable",
                 message="This Field may not be empty",
                 meta={"Required": self.required}
+            )
+        return False
+
+
+    
+    def _validate_blank(self, value):
+        if self.blank and isinstance(value, str) and value == "":
+            return ValidationError(
+                "blank",
+                "This Field may not be blank"
             )
         return False
 
@@ -39,36 +83,21 @@ class Field:
                     )
         return False
 
-    def _validate_required(self, value):
-        if self.required and (value is None):
-            return ValidationError(
-                "required",
-                "This field is required",
-                meta={"Required": self.required}
-
-            )
-
-        return False
-    
-    def _validate_blank(self, value):
-        if self.blank and (value == ""):
-            return ValidationError(
-                "blank",
-                "This Field may not be blank"
-            )
-        return False
-
-    def validate(self, value): # Field validation
+    def validate(self, value):  # Field validation
         errors = []
 
         for fn in (
                 self._validate_required,
+                self._validate_nullable,
                 self._validate_blank,
-                self._validate_requiredif,
         ):
             e = fn(value)
             if e:
                 errors.append(e)
+
+        e = self._validate_requiredif(value)
+        if e:
+            errors.append(e)
 
         for v in self.validators:
             e = v(value)
@@ -84,8 +113,15 @@ class Field:
         except ValidationError as e:
             return None, [e]   # STOP here
 
+        value_or_default = self._apply_default(value, other_field_value)
+        if isinstance(value_or_default, ValidationError):
+            return None, [value_or_default]
+
         errors = self.validate(value)
         if errors:
             return None, errors
 
         return value, []
+
+    def to_python(self, value):
+        return value

@@ -3,7 +3,7 @@ from Engine.Core.errors import ValidationError
 
 class Float(Field):
 
-    def __init__(self, *, required: bool=True, requiredif=None, nullable: bool=True, blank: bool=False, maxvalue: float=None, minvalue: float=None, validators=None):
+    def __init__(self, *, required: bool=True, requiredif=None, nullable: bool=True, blank: bool=False, default=None, maxvalue: float=None, minvalue: float=None, validators=None):
         from Engine.validators.Max import Max
         from Engine.validators.Min import Min
         validator = []
@@ -17,7 +17,7 @@ class Float(Field):
             validator.append(v)
 
         # for the Field class to handel the Field Validators
-        super().__init__(required=required, requiredif=requiredif, blank=blank, nullable=nullable ,validators=validators)
+        super().__init__(required=required, requiredif=requiredif, blank=blank, nullable=nullable, default=default ,validators=validators)
 
     # Validators would return an "actual" Error if it isn't the Correct Type
     def to_python(self, value):

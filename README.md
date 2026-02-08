@@ -83,6 +83,52 @@ email = String(email=True)
 
 Internally, these arguments are automatically converted into validator instances.
 
+### Field Standard Validators
+
+All Fields provide a set of built-in standard validators that can be enabled
+or configured directly via keyword arguments.
+
+These validators exist on **every Field type** and are part of the public API.
+
+---
+
+#### Default Behavior
+
+Unless explicitly overridden, all Fields behave as follows:
+
+- `required = True`
+- `nullable = True`
+- `blank = False`
+
+This means:
+- a field is required by default
+- `None` is accepted by default
+- empty values (e.g. empty strings) are **not** accepted by default
+
+---
+
+#### Available Standard Validators
+
+- `required`
+- `requiredIf`
+- `nullable`
+- `blank`
+- `default`
+
+---
+
+#### Usage
+
+```python
+from Engine import Form, String, Integer
+
+class ExampleForm(Form):
+    name = String(default="default")   # required=True, nullable=True, blank=False and Field is None and default is set take the default value
+    nickname = String(blank=True)      # allows empty string
+    age = Integer(nullable=False)      # None is not allowed
+    email = String(requiredIf=(name, True)) # email is only required if name is not None
+```
+
 ---
 
 ## Available Validators
@@ -132,7 +178,7 @@ Structure:
 ```python
 ValidationError(
     code="validator_name",
-    message="A default readable error message",
+    message="A default error message",
     meta={
         "name": expected_value
     }
@@ -145,7 +191,7 @@ Properties:
   Machine-readable error code (e.g. for frontends or translations)
 
 * **message**
-  Human-readable default error message
+  default error message
 
 * **meta**
   Additional context (e.g. expected values or limits)
