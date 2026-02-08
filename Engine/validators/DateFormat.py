@@ -2,30 +2,30 @@ from datetime import datetime
 from Engine.Core.errors import ValidationError
 
 class Dateformat:
-    def __init__(self, date_format):
-        self.date_format = date_format
-        self.strptformat = self.parser(date_format)
+    def __init__(self, dateformat="YYYY-MM-DD"):
+        self.dateformat = dateformat
+        self.strptformat = self.parser(dateformat)
 
     def __call__(self, value):
+
         try:
-            datetime.strptime(value, self.strptformat).date()
+            datetime.strptime(value, self.strptformat)
             return None
-        except (ValueError, TypeError):
+        except ValueError:
             return ValidationError(
-                code="Date",
-                message="Expected other Format",
-                meta={"format": self.date_format }
+                code="Dateformat",
+                message="Value has not the expected format",
+                meta={"format": self.dateformat},
             )
 
     @staticmethod
-    def parser(date_format):
+    def parser(dateformat):
         format_map = {
             "YYYY": "%Y",
             "YY": "%y",
             "DD": "%d",
             "MM": "%m",
         }
-        # Sortierung ist wichtig, damit YYYY vor YY ersetzt wird
         for token in sorted(format_map, key=len, reverse=True):
-            date_format = date_format.replace(token, format_map[token])
-        return date_format
+            dateformat = dateformat.replace(token, format_map[token])
+        return dateformat

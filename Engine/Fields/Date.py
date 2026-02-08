@@ -5,8 +5,8 @@ class Date(Field):
 
     def __init__(self, *, required: bool=True, requiredif=None, blank: bool=False, nullable: bool=None, dateformat=None, before=None, after=None, validators=None):
         from Engine.validators import Dateformat
-        from Engine.validators.BeforeDatetime import Before
-        from Engine.validators.AfterDatetime import After
+        from Engine.validators.BeforeDate import Before
+        from Engine.validators.AfterDate import After
 
         validator = []
 
@@ -24,10 +24,29 @@ class Date(Field):
         super().__init__(required=required, requiredif=requiredif, nullable=nullable, blank=blank , validators=validator)
 
     # Validators would return an "actual" Error if it isn't the Correct Type
+    from datetime import datetime
+
     def to_python(self, value):
         from datetime import datetime
+
         if value is None or value == "":
             return None
-        if not isinstance(value, datetime):
-            raise ValidationError("type", "invalid_dateformat", value)
-        return value
+        if isinstance(value, datetime):
+            return value
+        if isinstance(value, str):
+            # Possible Date formats
+            formats = [
+                "%Y-%m-%d",
+                "%d-%m-%Y",
+                "%m-%d-%Y",
+                "%Y/%m/%d",
+                "%d/%m/%Y",
+                "%m/%d/%Y",
+            ]
+            for token in sorted(formats, key=len, reverse=True):
+                try:
+                    datetime.strptime(value, token)
+                    return value
+                except ValueError:
+                    raise ValidationError("type", "invalid_date", value)
+        raise ValidationError("type", "invalid_date", value)

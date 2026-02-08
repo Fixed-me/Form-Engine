@@ -1,22 +1,21 @@
 from Engine.Core.errors import ValidationError
 from datetime import datetime
 
-class Before:
+class After:
 
-    def __init__(self, before, dateformat):
-        self.before = before
-        self.date_format = self.parser(dateformat) if dateformat else self.parser("YYYY-MM-DD") # Standart Format
-        self.before_datetime = datetime.strptime(self.before, self.date_format)
+    def __init__(self, after, dateformat="YYYY-MM-DD"):
+        self.after = after
+        self.date_format = self.parser(dateformat)
+        self.after_datetime = datetime.strptime(self.after, self.date_format)
 
     def __call__(self, value):
-        
-        value = datetime.strptime(value, self.date_format)
 
-        if not value < self.before_datetime:
+        value_date = datetime.strptime(value, self.date_format)
+        if not value_date > self.after_datetime:
             return ValidationError(
-                code="Before",
-                message="The Date is after the Expected date",
-                meta={"Before": self.before}
+                code="After datetime",
+                message=f"The Date is not after the Expected date",
+                meta={"After": self.after}
             )
         return None
 

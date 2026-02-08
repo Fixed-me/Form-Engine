@@ -21,5 +21,5 @@ class Bool(Field):
         if value is None or value == "":
             return None
         if not isinstance(value, bool):
-            raise ValidationError("type", "invalid_bool")
+            return ValidationError("type", "invalid_bool")
         return value

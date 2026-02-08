@@ -1,4 +1,3 @@
-from Engine import Max
 from Engine.Core.Field import Field
 from Engine.Core.errors import ValidationError
 
@@ -25,5 +24,5 @@ class Float(Field):
         if value is None or value == "":
             return None
         if not isinstance(value, float):
-            raise ValidationError("type", "Expected Float", value)
+            return ValidationError("type", "Expected Float", value)
         return value

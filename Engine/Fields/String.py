@@ -23,5 +23,5 @@ class String(Field):
         if value is None or value == "":
             return None
         if not isinstance(value, str):
-            raise ValidationError("type", "Expected string", value)
+            return ValidationError("type", "Expected string", value)
         return value
