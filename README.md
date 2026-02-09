@@ -72,6 +72,29 @@ from Engine.Validators import MinLength
 name = String(validators=[MinLength(3)])
 ```
 
+Currently available validators:
+
+* `Aftedate`
+* `Beforedate`
+* `Bool`
+* `Choices`
+* `Dateformat`
+* `Email`
+* `Equals`
+* `InList`
+* `Lowercase`
+* `Max(integer)`
+* `Maxlength`
+* `Min(integer)`
+* `MinLength`
+* `NotEquals`
+* `NoInList`
+* `Pattern`
+* `Regex`
+* `Uppercase`
+* `Url`
+
+
 #### Standard Validators (Shortcuts)
 
 Many validators are available directly as keyword arguments on a Field:
