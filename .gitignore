@@ -4,10 +4,6 @@
 # PyCharm
 *.iml
 
-#pip Project
-pyproject.toml
-setup.py
-
 #Tests
 /Tests
 testfile.py

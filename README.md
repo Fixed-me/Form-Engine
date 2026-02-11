@@ -16,6 +16,14 @@ The goal is to make forms **declarative**, **extensible**, and **easy to test**.
 
 ---
 
+## Installation
+
+```md
+git clone https://github.com/Fixed-me/Form-Engine.git
+cd Form-Engine
+pip install -e .
+````
+---
 ## Core Concepts
 
 ### Form
